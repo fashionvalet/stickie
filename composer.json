@@ -2,12 +2,14 @@
     "name": "fashionvalet/stickie",
     "description": "EZPL command generator for thermal label printer",
     "version": "0.0.1",
-    "require": {
-
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^5.4"
     },
     "autoload": {
         "psr-4": {
-            "FashionValet\\Stickie\\": "src/"
+            "FashionValet\\Stickie\\": "src/",
+            "TestCase\\": "tests/"
         }
     }
 }
