@@ -1,6 +1,6 @@
 ## Stickie
 
-[![Codeship Status for fashionvalet/stickie](https://codeship.com/projects/767875f0-1608-0134-714c-667ff3898a5e/status?branch=master)
+![Codeship Status for fashionvalet/stickie](https://codeship.com/projects/767875f0-1608-0134-714c-667ff3898a5e/status?branch=master)
 
 EZPL command generator for label thermal printer. This library is for anyone who wants to integrate directly with their printers without any 3rd party application.
 
