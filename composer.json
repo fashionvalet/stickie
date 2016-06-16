@@ -1,0 +1,13 @@
+{
+    "name": "fashionvalet/stickie",
+    "description": "EZPL command generator for thermal label printer",
+    "version": "0.0.1",
+    "require": {
+
+    },
+    "autoload": {
+        "psr-4": {
+            "FashionValet\\Stickie\\": "src/"
+        }
+    }
+}
