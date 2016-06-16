@@ -2,7 +2,7 @@
 
 namespace FashionValet\Stickie;
 
-class Builder
+class Builder implements BuilderInterface
 {
     protected $commandPipe;
 

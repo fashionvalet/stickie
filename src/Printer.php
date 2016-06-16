@@ -6,9 +6,12 @@ class Printer implements PrinterInterface
 {
     protected $printer;
 
-    public function __construct(Driver\ConnectorInterface $printer)
+    protected $builder;
+
+    public function __construct(Driver\ConnectorInterface $printer, BuilderInterface $builder)
     {
         $this->printer = $printer;
+        $this->builder = $builder;
     }
 
     public function printer()
@@ -16,8 +19,14 @@ class Printer implements PrinterInterface
         return $this->printer;
     }
 
+    public function builder()
+    {
+        return $this->builder;
+    }
+
     public function generate()
     {
-        //
+        $commands = $this->builder->compose();
+        $this->printer->send($commands);
     }
 }

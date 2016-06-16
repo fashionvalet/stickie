@@ -11,8 +11,9 @@ class PrinterTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $connector = $this->prophesize('\FashionValet\Stickie\Driver\ConnectorInterface');
+        $builder = $this->prophesize('\FashionValet\Stickie\BuilderInterface');
 
-        $this->printer = new Printer($connector->reveal());
+        $this->printer = new Printer($connector->reveal(), $builder->reveal());
     }
 
     public function tearDown()
@@ -23,5 +24,10 @@ class PrinterTest extends \PHPUnit_Framework_TestCase
     public function testPrinterMethod()
     {
         $this->assertInstanceOf('\FashionValet\Stickie\Driver\ConnectorInterface', $this->printer->printer());
+    }
+
+    public function testBuilderMethod()
+    {
+        $this->assertInstanceOf('\FashionValet\Stickie\BuilderInterface', $this->printer->builder());
     }
 }
