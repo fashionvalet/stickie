@@ -53,11 +53,25 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\FashionValet\Stickie\Builder', $builder->setLabelHeight($height, $spacing));
     }
 
+    public function testSetDensityMethod()
+    {
+        $density = 10;
+
+        $commandPipe = $this->prophesize('\FashionValet\Stickie\Command\CommandPipeInterface');
+        $builder = new Builder($commandPipe->reveal());
+
+        $command = new Command\Printing\Density($density);
+        $commandPipe->addCommand($command)->shouldBeCalled();
+
+        $this->assertInstanceOf('\FashionValet\Stickie\Builder', $builder->setDensity($density));
+    }
+
     public function testComposeMethod()
     {
         $width = 50;
         $height = 45;
         $spacing = 3;
+        $density = 10;
 
         $commandPipe = $this->prophesize('\FashionValet\Stickie\Command\CommandPipeInterface');
         $builder = new Builder($commandPipe->reveal());
@@ -68,14 +82,17 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $commandPipe->addCommand($commandWidth)->shouldBeCalled();
         $commandHeight = new Command\Printing\Height($height, $spacing);
         $commandPipe->addCommand($commandHeight)->shouldBeCalled();
+        $commandDensity = new Command\Printing\Density($density);
+        $commandPipe->addCommand($commandDensity)->shouldBeCalled();
 
-        $commandPipe->getCommands()->shouldBeCalled()->willReturn(['~MDEL', '^W50', '^Q45,3']);
+        $commandPipe->getCommands()->shouldBeCalled()->willReturn(['~MDEL', '^W50', '^Q45,3', '^H10']);
 
         $builder->resetMemory()
             ->setLabelWidth($width)
-            ->setLabelHeight($height, $spacing);
+            ->setLabelHeight($height, $spacing)
+            ->setDensity($density);
 
-        $stub = "~MDEL\n^W50\n^Q45,3\n";
+        $stub = "~MDEL\n^W50\n^Q45,3\n^H10\n";
 
         $this->assertEquals($stub, $builder->compose());
     }

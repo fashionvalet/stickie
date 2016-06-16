@@ -1,6 +1,6 @@
 <?php
 
-namespace FashhionValet\Stickie\Command\Printing;
+namespace FashionValet\Stickie\Command\Printing;
 
 use FashionValet\Stickie\Command\AbstractableCommand;
 

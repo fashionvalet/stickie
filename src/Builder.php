@@ -37,6 +37,13 @@ class Builder
         return $this;
     }
 
+    public function setDensity($density)
+    {
+        $this->commandPipe->addCommand(new Command\Printing\Density($density));
+
+        return $this;
+    }
+
     public function compose()
     {
         $commands = $this->commandPipe->getCommands();
