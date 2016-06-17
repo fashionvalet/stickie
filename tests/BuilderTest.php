@@ -147,8 +147,10 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $commandPipe->addCommand($commandBarcode)->shouldBeCalled();
         $commandText = new Command\Text\Font(10, 25, 120, 1, 1, 0, 0, 'Foobar');
         $commandPipe->addCommand($commandText)->shouldBeCalled();
+        $commandLabelEnd = new Command\Printing\LabelEnd();
+        $commandPipe->addCommand($commandLabelEnd)->shouldBeCalled();
 
-        $commandPipe->getCommands()->shouldBeCalled()->willReturn(['~MDEL', '^W50', '^Q45,3', '^H10', 'L', 'BQ, 55, 10, 2, 10, 70, 0, 1, Foobar', 'AB, 25, 120, 1, 1, 0, 0, Foobar']);
+        $commandPipe->getCommands()->shouldBeCalled()->willReturn(['~MDEL', '^W50', '^Q45,3', '^H10', 'L', 'BQ, 55, 10, 2, 10, 70, 0, 1, Foobar', 'AB, 25, 120, 1, 1, 0, 0, Foobar', 'E']);
 
         $builder->resetMemory()
             ->setLabelWidth($width)
@@ -156,9 +158,10 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
             ->setDensity($density)
             ->labelStart()
             ->barcode('CODE128', 55, 10, 2, 10, 70, 0, 1, 'Foobar')
-            ->text(10, 25, 120, 1, 1, 0, 0, 'Foobar');
+            ->text(10, 25, 120, 1, 1, 0, 0, 'Foobar')
+            ->labelEnd();
 
-        $stub = "~MDEL\n^W50\n^Q45,3\n^H10\nL\nBQ, 55, 10, 2, 10, 70, 0, 1, Foobar\nAB, 25, 120, 1, 1, 0, 0, Foobar\n";
+        $stub = "~MDEL\n^W50\n^Q45,3\n^H10\nL\nBQ, 55, 10, 2, 10, 70, 0, 1, Foobar\nAB, 25, 120, 1, 1, 0, 0, Foobar\nE\n";
 
         $this->assertEquals($stub, $builder->compose());
     }
