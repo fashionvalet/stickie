@@ -44,6 +44,39 @@ class Builder implements BuilderInterface
         return $this;
     }
 
+    public function copies($copies)
+    {
+        $this->commandPipe->addCommand(new Command\Printing\Copy($copies));
+
+        return $this;
+    }
+
+    public function labelStart()
+    {
+        $this->commandPipe->addCommand(new Command\Printing\LabelStart);
+
+        return $this;
+    }
+
+    public function labelEnd()
+    {
+        $this->commandPipe->addCommand(new Command\Printing\LabelEnd);
+
+        return $this;
+    }
+
+    public function barcode($type, $horizontal, $vertical, $narrow, $wide, $height, $rotation, $text, $value) {
+        $this->commandPipe->addCommand(new Command\Image\Barcode($type, $horizontal, $vertical, $narrow, $wide, $height, $rotation, $text, $value));
+
+        return $this;
+    }
+
+    public function text($size, $horizontal, $vertical, $magnifyHorizontal, $magnifyVertical, $gap, $rotation, $value) {
+        $this->commandPipe->addCommand(new Command\Text\Font($size, $horizontal, $vertical, $magnifyHorizontal, $magnifyVertical, $gap, $rotation, $value));
+
+        return $this;
+    }
+
     public function compose()
     {
         $commands = $this->commandPipe->getCommands();

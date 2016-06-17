@@ -23,7 +23,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $command = new Command\Memory\Format;
         $commandPipe->addCommand($command)->shouldBeCalled();
 
-        $this->assertInstanceOf('\FashionValet\Stickie\Builder', $builder->resetMemory());
+        $this->assertInstanceOf('\FashionValet\Stickie\BuilderInterface', $builder->resetMemory());
     }
 
     public function testSetLabelWidthMethod()
@@ -36,7 +36,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $command = new Command\Printing\Width($width);
         $commandPipe->addCommand($command)->shouldBeCalled();
 
-        $this->assertInstanceOf('\FashionValet\Stickie\Builder', $builder->setLabelWidth($width));
+        $this->assertInstanceOf('\FashionValet\Stickie\BuilderInterface', $builder->setLabelWidth($width));
     }
 
     public function testSetLabelHeightMethod()
@@ -50,7 +50,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $command = new Command\Printing\Height($height, $spacing);
         $commandPipe->addCommand($command)->shouldBeCalled();
 
-        $this->assertInstanceOf('\FashionValet\Stickie\Builder', $builder->setLabelHeight($height, $spacing));
+        $this->assertInstanceOf('\FashionValet\Stickie\BuilderInterface', $builder->setLabelHeight($height, $spacing));
     }
 
     public function testSetDensityMethod()
@@ -63,7 +63,64 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $command = new Command\Printing\Density($density);
         $commandPipe->addCommand($command)->shouldBeCalled();
 
-        $this->assertInstanceOf('\FashionValet\Stickie\Builder', $builder->setDensity($density));
+        $this->assertInstanceOf('\FashionValet\Stickie\BuilderInterface', $builder->setDensity($density));
+    }
+
+    public function testCopiesMethod()
+    {
+        $copies = 1;
+
+        $commandPipe = $this->prophesize('\FashionValet\Stickie\Command\CommandPipeInterface');
+        $builder = new Builder($commandPipe->reveal());
+
+        $command = new Command\Printing\Copy($copies);
+        $commandPipe->addCommand($command)->shouldBeCalled();
+
+        $this->assertInstanceOf('\FashionValet\Stickie\BuilderInterface', $builder->copies($copies));
+    }
+
+    public function testLabelStartMethod()
+    {
+        $commandPipe = $this->prophesize('\FashionValet\Stickie\Command\CommandPipeInterface');
+        $builder = new Builder($commandPipe->reveal());
+
+        $command = new Command\Printing\LabelStart;
+        $commandPipe->addCommand($command)->shouldBeCalled();
+
+        $this->assertInstanceOf('\FashionValet\Stickie\BuilderInterface', $builder->labelStart());
+    }
+
+    public function testLabelEndMethod()
+    {
+        $commandPipe = $this->prophesize('\FashionValet\Stickie\Command\CommandPipeInterface');
+        $builder = new Builder($commandPipe->reveal());
+
+        $command = new Command\Printing\LabelEnd;
+        $commandPipe->addCommand($command)->shouldBeCalled();
+
+        $this->assertInstanceOf('\FashionValet\Stickie\BuilderInterface', $builder->labelEnd());
+    }
+
+    public function testBarcodeMethod()
+    {
+        $commandPipe = $this->prophesize('\FashionValet\Stickie\Command\CommandPipeInterface');
+        $builder = new Builder($commandPipe->reveal());
+
+        $command = new Command\Image\Barcode('CODE128', 55, 10, 2, 10, 70, 0, 1, 'Foobar');
+        $commandPipe->addCommand($command)->shouldBeCalled();
+
+        $this->assertInstanceOf('\FashionValet\Stickie\BuilderInterface', $builder->barcode('CODE128', 55, 10, 2, 10, 70, 0, 1, 'Foobar'));
+    }
+
+    public function testTextMethod()
+    {
+        $commandPipe = $this->prophesize('\FashionValet\Stickie\Command\CommandPipeInterface');
+        $builder = new Builder($commandPipe->reveal());
+
+        $command = new Command\Text\Font(10, 25, 120, 1, 1, 0, 0, 'Foobar');
+        $commandPipe->addCommand($command)->shouldBeCalled();
+
+        $this->assertInstanceOf('\FashionValet\Stickie\BuilderInterface', $builder->text(10, 25, 120, 1, 1, 0, 0, 'Foobar'));
     }
 
     public function testComposeMethod()
@@ -84,15 +141,24 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $commandPipe->addCommand($commandHeight)->shouldBeCalled();
         $commandDensity = new Command\Printing\Density($density);
         $commandPipe->addCommand($commandDensity)->shouldBeCalled();
+        $commandLabelStart = new Command\Printing\LabelStart();
+        $commandPipe->addCommand($commandLabelStart)->shouldBeCalled();
+        $commandBarcode = new Command\Image\Barcode('CODE128', 55, 10, 2, 10, 70, 0, 1, 'Foobar');
+        $commandPipe->addCommand($commandBarcode)->shouldBeCalled();
+        $commandText = new Command\Text\Font(10, 25, 120, 1, 1, 0, 0, 'Foobar');
+        $commandPipe->addCommand($commandText)->shouldBeCalled();
 
-        $commandPipe->getCommands()->shouldBeCalled()->willReturn(['~MDEL', '^W50', '^Q45,3', '^H10']);
+        $commandPipe->getCommands()->shouldBeCalled()->willReturn(['~MDEL', '^W50', '^Q45,3', '^H10', 'L', 'BQ, 55, 10, 2, 10, 70, 0, 1, Foobar', 'AB, 25, 120, 1, 1, 0, 0, Foobar']);
 
         $builder->resetMemory()
             ->setLabelWidth($width)
             ->setLabelHeight($height, $spacing)
-            ->setDensity($density);
+            ->setDensity($density)
+            ->labelStart()
+            ->barcode('CODE128', 55, 10, 2, 10, 70, 0, 1, 'Foobar')
+            ->text(10, 25, 120, 1, 1, 0, 0, 'Foobar');
 
-        $stub = "~MDEL\n^W50\n^Q45,3\n^H10\n";
+        $stub = "~MDEL\n^W50\n^Q45,3\n^H10\nL\nBQ, 55, 10, 2, 10, 70, 0, 1, Foobar\nAB, 25, 120, 1, 1, 0, 0, Foobar\n";
 
         $this->assertEquals($stub, $builder->compose());
     }

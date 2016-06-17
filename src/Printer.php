@@ -27,6 +27,6 @@ class Printer implements PrinterInterface
     public function generate()
     {
         $commands = $this->builder->compose();
-        $this->printer->send($commands);
+        $this->printer->send($commands)->close();
     }
 }
