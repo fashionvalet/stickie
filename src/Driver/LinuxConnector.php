@@ -20,5 +20,7 @@ class LinuxConnector implements ConnectorInterface
     public function send($data)
     {
         fwrite($this->pointer, $data);
+
+        return $this;
     }
 }
