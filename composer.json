@@ -1,6 +1,9 @@
 {
     "name": "fashionvalet/stickie",
+    "type": "library",
     "description": "EZPL command generator for thermal label printer",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "version": "0.0.1",
     "require": {
         "php": ">=5.5"
