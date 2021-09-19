@@ -2,13 +2,18 @@
 
 namespace FashionValet\Stickie\Driver;
 
+use Exception;
+
 class LinuxConnector implements ConnectorInterface
 {
     protected $pointer;
 
     public function __construct($filename)
     {
-        $this->pointer = fopen($filename, 'wb+');
+        new WindowsPrintConnector();
+        if (!$this->pointer = fopen($filename, 'wb+')) {
+            throw new Exception('Ca not connect to printer');
+        }
     }
 
     public function close()
@@ -19,8 +24,21 @@ class LinuxConnector implements ConnectorInterface
 
     public function send($data)
     {
-        fwrite($this->pointer, $data);
+        if (!fwrite($this->pointer, $data)) {
+            throw new Exception('Ca not send data to printer');
+        }
 
         return $this;
+    }
+
+    public function read()
+    {
+        sleep(2);
+        $readData = '';
+        while (!feof($this->pointer)) {
+            $readData .= fgets($this->pointer);
+        }
+
+        return $readData;
     }
 }
