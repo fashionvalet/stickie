@@ -4,8 +4,12 @@ namespace TestCase;
 
 use FashionValet\Stickie\Printer;
 
+<<<<<<< HEAD
 //class PrinterTest extends \PHPUnit_Framework_TestCase
 class PrinterTest 
+=======
+class PrinterTest extends \PHPUnit_Framework_TestCase
+>>>>>>> 2e407658ef1863d4556f15fc088c643fd7afae5d
 {
     protected $printer;
 
